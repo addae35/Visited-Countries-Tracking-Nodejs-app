@@ -1,0 +1,32 @@
+services:
+  trackerdb:
+    build:
+      context: ./Dockerfiles/db
+    container_name: trackerdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nopassword
+      POSTGRES_DB: world
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  trackerapp:
+    build:
+      context: .
+      dockerfile: Dockerfiles/app/Dockerfile
+    container_name: trackerapp
+    environment:
+      DB_HOST: trackerdb
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: nopassword
+      DB_NAME: world
+    ports:
+      - "3000:3000"
+    depends_on:
+      - trackerdb
+
+volumes:
+  pgdata:
