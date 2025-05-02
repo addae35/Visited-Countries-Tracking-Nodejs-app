@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-app
+spec:
+  selector:
+    app: node-app
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30001
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+        - name: node-app
+          image: emacodes/trackerapp:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: trackerdb
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: world
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: nopassword
+
